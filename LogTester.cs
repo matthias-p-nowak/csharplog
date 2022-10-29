@@ -9,33 +9,40 @@ using System.Threading.Tasks;
 
 namespace csharplog
 {
+  /// <summary>
+  /// Testing class
+  /// </summary>
   class LogTester
   {
+    // firing a message each minute
     private static Timer timer;
 
     static LogTester()
     {
+      // just showing the order of log messages
       Console.WriteLine("LogTester initialized");
       FileLog.Write("initialized");
     }
     static void Main(string[] args)
     {
       Console.WriteLine("Main");
+      // testing performance penalty of this detailed logging approach
       var sw = new Stopwatch();
       sw.Start();
       for(int i=0;i<10;++i)
       FileLog.Write("hello");
       sw.Stop();
       Console.WriteLine($"got {sw.ElapsedMilliseconds} ms");
-      var n = DateTime.Now;
-      var n1 = new DateTime(n.Year, n.Month, n.Day, n.Hour, 0, 0);
-      n1 = n1.AddHours(1);
-      var td = n1 - n;
-      Console.WriteLine($"n1= {n1:HH:mm:ss} in {td.TotalMilliseconds} ms");
+      // starting the time that should adjust itself to whole minutes
       timer = new Timer(WriteTimer,null,100,2000);
+      // just let the program run until user enters a key
+      Console.WriteLine("press a key to end this program");
       Console.ReadKey();
     }
-
+    /// <summary>
+    /// Log a message and adjust the time to fire at next full minute
+    /// </summary>
+    /// <param name="state">ignored</param>
     private static void WriteTimer(object state)
     {
       FileLog.Write($"timer {state} {Thread.CurrentThread.Name}");
